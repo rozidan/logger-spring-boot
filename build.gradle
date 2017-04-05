@@ -1,0 +1,46 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+plugins {
+    id 'jacoco'
+    id 'com.github.hierynomus.license' version '0.13.1'
+    id 'net.researchgate.release' version '2.5.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: 'signing'
+apply plugin: 'maven'
+
+group = "com.github.rozidan"
+archivesBaseName = "springboot-boot-starter-logger"
+sourceCompatibility = 1.8
+bootRepackage.enabled = false
+
+apply from: 'gradle/release.gradle'
+apply from: 'gradle/license.gradle'
+apply from: 'gradle/checker.gradle'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'org.springframework.boot:spring-boot-starter-aop'
+    compileOnly 'org.projectlombok:lombok'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}

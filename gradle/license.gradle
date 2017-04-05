@@ -1,0 +1,9 @@
+license {
+    header rootProject.file('codequality/HEADER')
+    strictCheck true
+    skipExistingHeaders false
+    include "**/*.java"
+
+    ext.name = 'Idan Rozenfeld'
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+}
