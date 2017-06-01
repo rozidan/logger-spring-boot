@@ -14,7 +14,7 @@ In order to add logger to your project simply add this dependency to your classp
 <dependency>
     <groupId>com.github.rozidan</groupId>
     <artifactId>spring-boot-starter-logger</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
