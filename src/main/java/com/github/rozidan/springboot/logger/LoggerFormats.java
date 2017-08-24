@@ -15,11 +15,7 @@
  */
 package com.github.rozidan.springboot.logger;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * <p>
@@ -48,10 +44,10 @@ import lombok.Setter;
 @Builder
 public class LoggerFormats {
 
-   private String enter;
-   private String warnBefore;
-   private String warnAfter;
-   private String after;
-   private String error;
+    private String enter;
+    private String warnBefore;
+    private String warnAfter;
+    private String after;
+    private String error;
 
 }

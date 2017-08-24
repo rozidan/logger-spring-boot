@@ -1,43 +1,41 @@
 tasks.withType(Pmd) {
     ignoreFailures true
     reports {
-        xml.enabled false
+        xml.enabled true
         html.enabled true
     }
 }
 
 tasks.withType(FindBugs) {
-    ignoreFailures = true
-    effort = 'max'
-    reportLevel = 'low'
+    ignoreFailures true
+    effort 'max'
+    reportLevel 'low'
     reports {
-        xml.enabled false
-        html.enabled true
+        xml.enabled true
+        html.enabled false
     }
 }
 
-checkstyle { toolVersion '7.3' }
+checkstyle { toolVersion '8.1' }
 
 tasks.withType(Checkstyle) {
     ignoreFailures true
     showViolations false
     configFile 'gradle/checkstyle.xml' as File
     reports {
-        xml.enabled false
+        xml.enabled true
         html.enabled true
     }
 }
 
-jacoco { toolVersion '0.7.8' }
-
 test {
-    jacoco { append = false }
+    jacoco { append false }
     finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.enabled true
+        html.enabled true
     }
 }
