@@ -1,7 +1,7 @@
-# Spring Boot Logger Starter
-> A Spring Boot starter that will help you log your application more easily.
+# Spring Boot Logger
+> A Spring Boot `@Loggable` annotation that will help you log your application more easily.
 
-> Base on [jcabi-aspects](http://aspects.jcabi.com/annotation-loggable.html) project @Loggable annotation.
+> Base on [jcabi-aspects](http://aspects.jcabi.com/annotation-loggable.html) project `@Loggable` annotation.
 
 [![Build Status](https://travis-ci.org/rozidan/logger-spring-boot-starter.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot-starter)
 [![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot-starter/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot-starter?branch=master)
