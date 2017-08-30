@@ -2,7 +2,7 @@ compileJava { options.fork = true }
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Spring boot starter for Logger',
+        attributes 'Implementation-Title': 'Spring boot Logger',
                 'Implementation-Version': version
     }
 }
@@ -40,15 +40,15 @@ uploadArchives {
             }
 
             pom.project {
-                name 'Spring Boot Logger Starter'
+                name 'Spring Boot Logger'
                 packaging 'jar'
-                description 'Spring boot starter for Logger'
-                url 'https://github.com/rozidan/logger-springboot-boot-starter.git'
+                description 'Spring boot automatic logger helper'
+                url 'https://github.com/rozidan/logger-spring-boot.git'
 
                 scm {
-                    connection 'scm:git:https://github.com/rozidan/logger-springboot-boot-starter.git'
-                    developerConnection 'scm:git:https://github.com/rozidan/logger-springboot-boot-starter.git'
-                    url 'https://github.com/rozidan/logger-springboot-boot-starter.git'
+                    connection 'scm:git:https://github.com/rozidan/logger-spring-boot.git'
+                    developerConnection 'scm:git:https://github.com/rozidan/logger-spring-boot.git'
+                    url 'https://github.com/rozidan/logger-spring-boot.git'
                 }
 
                 licenses {
