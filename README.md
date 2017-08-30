@@ -17,13 +17,13 @@ In order to add logger to your project simply add this dependency to your classp
 ```xml
 <dependency>
     <groupId>com.github.rozidan</groupId>
-    <artifactId>logger-spring-boot-starter</artifactId>
+    <artifactId>logger-spring-boot</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 ```groovy
-compile 'com.github.rozidan:logger-spring-boot-starter:1.0.0-SNAPSHOT'
+compile 'com.github.rozidan:logger-spring-boot:1.0.0-SNAPSHOT'
 ```
 
 ## Log your application
