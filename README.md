@@ -3,8 +3,8 @@
 
 > Base on [jcabi-aspects](http://aspects.jcabi.com/annotation-loggable.html) project `@Loggable` annotation.
 
-[![Build Status](https://travis-ci.org/rozidan/logger-spring-boot-starter.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot-starter)
-[![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot-starter/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot-starter?branch=master)
+[![Build Status](https://travis-ci.org/rozidan/logger-spring-boot.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot)
+[![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot?branch=master)
 
 ## Features
 Register the Logger to your Spring Boot application and allow it to log wherever you tell it to.
