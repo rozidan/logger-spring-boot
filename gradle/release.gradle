@@ -42,7 +42,7 @@ uploadArchives {
             pom.project {
                 name 'Spring Boot Logger'
                 packaging 'jar'
-                description 'Spring boot automatic logger helper'
+                description 'A Spring Boot `@Loggable` annotation that will help you log your application more easily'
                 url 'https://github.com/rozidan/logger-spring-boot.git'
 
                 scm {
