@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2017 Idan Rozenfeld the original author or authors
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,16 +19,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Helper method for logger.
  *
  * @author Idan Rozenfeld
- *
  */
 @Component
 public final class Logger {
 
     private void log(org.slf4j.Logger logger, LogLevel level, String message) {
+        Objects.requireNonNull(level, "LogLevel must not be null.");
         switch (level) {
             case TRACE:
                 logger.trace(message);
@@ -52,6 +54,7 @@ public final class Logger {
     }
 
     private void log(org.slf4j.Logger logger, LogLevel level, String message, Throwable err) {
+        Objects.requireNonNull(level, "LogLevel must not be null.");
         switch (level) {
             case TRACE:
                 logger.trace(message, err);
@@ -91,6 +94,7 @@ public final class Logger {
     }
 
     private boolean isEnabled(org.slf4j.Logger logger, LogLevel level) {
+        Objects.requireNonNull(level, "LogLevel must not be null.");
         switch (level) {
             case TRACE:
                 return logger.isTraceEnabled();
@@ -104,7 +108,7 @@ public final class Logger {
             case FATAL:
                 return logger.isErrorEnabled();
             default:
-                return false;
+                throw new IllegalArgumentException("LogLevel must be one of the enabled levels.");
         }
     }
 
