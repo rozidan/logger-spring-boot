@@ -5,6 +5,7 @@
 
 [![Build Status](https://travis-ci.org/rozidan/logger-spring-boot.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot)
 [![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot?branch=master)
+[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Features
 Register the Logger to your Spring Boot application and allow it to log wherever you tell it to.
