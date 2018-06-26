@@ -27,6 +27,18 @@ In order to add logger to your project simply add this dependency to your classp
 compile 'com.github.rozidan:logger-spring-boot:1.0.0-SNAPSHOT'
 ```
 
+
+and the sonatype public repository:
+
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/groups/public" }
+    ...
+}
+```
+
 ## Log your application
 
 Apply the Logger to your application with `@EnableLogger` annotation in a configuration class:
