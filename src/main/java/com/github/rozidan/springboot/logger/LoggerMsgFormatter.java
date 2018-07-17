@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2017 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2018 Idan Rozenfeld the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,21 @@
  */
 package com.github.rozidan.springboot.logger;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
+
 /**
  * Helper class for log message format.
  *
  * @author Idan
- *
  */
 final class LoggerMsgFormatter {
 
@@ -87,8 +86,7 @@ final class LoggerMsgFormatter {
         return StrSubstitutor.replace(formats.getAfter(), values);
     }
 
-    public String error(ProceedingJoinPoint joinPoint, Loggable loggable, Object returnVal, long nano,
-                        Throwable err) {
+    public String error(ProceedingJoinPoint joinPoint, Loggable loggable, long nano, Throwable err) {
         Map<String, Object> values = new HashMap<>();
         values.put(METHDO_VALUE, methodName(joinPoint));
         values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
@@ -125,11 +123,17 @@ final class LoggerMsgFormatter {
     }
 
     private int errLine(Throwable err) {
-        return err.getStackTrace()[0].getLineNumber();
+        if (err.getStackTrace().length > 0) {
+            return err.getStackTrace()[0].getLineNumber();
+        }
+        return -1;
     }
 
     private String errSourceClass(Throwable err) {
-        return err.getStackTrace()[0].getClassName();
+        if (err.getStackTrace().length > 0) {
+            return err.getStackTrace()[0].getClassName();
+        }
+        return "somewhere";
     }
 
     private String durationString(long nano) {

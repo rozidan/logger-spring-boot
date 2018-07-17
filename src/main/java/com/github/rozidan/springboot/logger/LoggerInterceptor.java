@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2017 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2018 Idan Rozenfeld the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package com.github.rozidan.springboot.logger;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,18 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 /**
  * AspectJ to intercept {@link Loggable} methods or classes.
  *
  * @author Idan Rozenfeld
- *
  */
 @Aspect
 @Component
@@ -125,10 +124,10 @@ public class LoggerInterceptor {
             return returnVal;
         } catch (Throwable ex) {
             if (contains(loggable.ignore(), ex)) {
-                log(LogLevel.ERROR, formatter.error(joinPoint, loggable, returnVal, System.nanoTime() - start, ex),
+                log(LogLevel.ERROR, formatter.error(joinPoint, loggable, System.nanoTime() - start, ex),
                         joinPoint, loggable);
             } else {
-                log(formatter.error(joinPoint, loggable, returnVal, System.nanoTime() - start, ex),
+                log(formatter.error(joinPoint, loggable, System.nanoTime() - start, ex),
                         joinPoint, loggable, ex);
             }
             throw ex;
