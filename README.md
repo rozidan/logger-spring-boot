@@ -91,28 +91,6 @@ Set a different logger name (default is class name):
 @Loggable(value = LogLevel.WARN, name = "my-logger-name")
 ```
 
-## Log messages custom format
-
-To change the log messages format simply create bean of type `LoggerFormats`
-
-```java
-@Configuration
-@EnableLogger
-public class LoggerConfig {
-	@Bean
-	public LoggerFormats loggerFormats() {
-		return LoggerFormats.builder()
-			.before("...")
-			.after("...)
-			...
-			.build();
-	}
-}
-```
-Please see `loggerFormats` javadoc for available placeholders.
-
-
-
 ## License
 
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)
