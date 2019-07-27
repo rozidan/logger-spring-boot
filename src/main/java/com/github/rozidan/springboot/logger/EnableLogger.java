@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2019 Idan Roz the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import org.springframework.context.annotation.Import;
 
 /**
@@ -28,9 +27,6 @@ import org.springframework.context.annotation.Import;
  *
  * This should be applied to a Spring java config and should have an accompanying '@Configuration'
  * annotation.
- * <p>
- * you can override the log message format by creating {@link LoggerFormats} bean.
- * </p>
  *
  * @author Idan Rozenfeld
  */

@@ -1,47 +1,191 @@
-buildscript {
-    ext {
-        springBootVersion = '1.5.6.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
+import com.github.spotbugs.SpotBugsTask
 
 plugins {
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id 'java'
+    id 'checkstyle'
+    id "com.github.spotbugs" version "1.7.1"
+    id 'pmd'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.sonarqube' version '2.7'
     id 'jacoco'
-    id 'com.github.hierynomus.license' version '0.13.1'
-    id 'net.researchgate.release' version '2.5.0'
-    id 'com.github.kt3k.coveralls' version '2.8.1'
+    id 'com.github.hierynomus.license' version '0.15.0'
+    id 'net.researchgate.release' version '2.8.1'
+    id 'com.github.kt3k.coveralls' version '2.8.4'
 }
 
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
-apply plugin: 'signing'
-apply plugin: 'maven'
+apply plugin: 'io.spring.dependency-management'
 
-group = "com.github.rozidan"
-archivesBaseName = "logger-spring-boot"
-sourceCompatibility = 1.8
-bootRepackage.enabled = false
-
-apply from: 'gradle/release.gradle'
-apply from: 'gradle/license.gradle'
-apply from: 'gradle/checker.gradle'
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
-
 dependencies {
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     compileOnly 'org.projectlombok:lombok'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+springBoot {
+    buildInfo()
+}
+
+bootJar.enabled = false
+jar.enabled = true
+
+tasks.withType(Jar) {
+    manifest {
+        attributes 'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+    }
+    from(rootProject.projectDir) {
+        include 'LICENSE'
+        into 'META-INF'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.fork = true
+    options.incremental = true
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'Springboot logger annotation'
+                description = project.description
+                url = 'https://github.com/rozidan/logger-spring-boot.git'
+
+                organization {
+                    name = 'Idan Rozenfeld'
+                    url = 'https://github.com/rozidan'
+                }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'rozidan'
+                        name = 'Idan Roz'
+                        email = 'rozidan@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/rozidan/logger-spring-boot.git'
+                    developerConnection = 'scm:git:https://github.com/rozidan/logger-spring-boot.git'
+                    url = 'https://github.com/rozidan/logger-spring-boot.git'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? mavenSnapshotsUrl : mavenReleasesUrl
+
+            credentials {
+                username mavenUsername
+                password mavenPassword
+            }
+        }
+    }
+}
+
+tasks.withType(Sign) {
+    onlyIf {
+        !version.endsWith('SNAPSHOT')
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(SpotBugsTask) {
+    ignoreFailures = true
+    reportLevel = 'low'
+    effort = 'max'
+    reports.xml.enabled = false
+    reports.html.enabled = true
+}
+
+tasks.withType(Pmd) {
+    ignoreFailures true
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+tasks.withType(Checkstyle) {
+    ignoreFailures true
+    showViolations false
+    configFile 'gradle/checkstyle.xml' as File
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+test {
+    jacoco {
+        append = false
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+license {
+    header rootProject.file('codequality/HEADER')
+    strictCheck true
+    skipExistingHeaders false
+    include "**/*.java"
+
+    ext.name = 'Idan Roz'
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+}
+
+release {
+    tagTemplate = '${version}'
+    git {
+        requireBranch = 'master'
+        pushToRemote = 'origin'
+    }
+}
+
+afterReleaseBuild.dependsOn uploadArchives

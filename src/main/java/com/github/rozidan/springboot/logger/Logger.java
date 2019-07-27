@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2019 Idan Roz the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package com.github.rozidan.springboot.logger;
 
 import java.util.Objects;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
@@ -29,68 +28,44 @@ import org.springframework.stereotype.Component;
 @Component
 public final class Logger {
 
-    private void log(org.slf4j.Logger logger, LogLevel level, String message) {
+    public void log(LogLevel level, Class<?> clazz, String message, Object... args) {
+        log(LoggerFactory.getLogger(clazz), level, message, args);
+    }
+
+    public void log(LogLevel level, String name, String message, Object... args) {
+        log(LoggerFactory.getLogger(name), level, message, args);
+    }
+
+    public boolean isEnabled(LogLevel level, Class<?> clazz) {
+        return isEnabled(LoggerFactory.getLogger(clazz), level);
+    }
+
+    public boolean isEnabled(LogLevel level, String name) {
+        return isEnabled(LoggerFactory.getLogger(name), level);
+    }
+
+    private void log(org.slf4j.Logger logger, LogLevel level, String message, Object... args) {
         Objects.requireNonNull(level, "LogLevel must not be null.");
         switch (level) {
             case TRACE:
-                logger.trace(message);
+                logger.trace(message, args);
                 break;
             case DEBUG:
-                logger.debug(message);
+                logger.debug(message, args);
                 break;
             case INFO:
-                logger.info(message);
+                logger.info(message, args);
                 break;
             case WARN:
-                logger.warn(message);
+                logger.warn(message, args);
                 break;
             case ERROR:
             case FATAL:
-                logger.error(message);
+                logger.error(message, args);
                 break;
             default:
                 break;
         }
-    }
-
-    private void log(org.slf4j.Logger logger, LogLevel level, String message, Throwable err) {
-        Objects.requireNonNull(level, "LogLevel must not be null.");
-        switch (level) {
-            case TRACE:
-                logger.trace(message, err);
-                break;
-            case DEBUG:
-                logger.debug(message, err);
-                break;
-            case INFO:
-                logger.info(message, err);
-                break;
-            case WARN:
-                logger.warn(message, err);
-                break;
-            case ERROR:
-            case FATAL:
-                logger.error(message, err);
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void log(LogLevel level, Class<?> clazz, String message) {
-        log(LoggerFactory.getLogger(clazz), level, message);
-    }
-
-    public void log(LogLevel level, String name, String message) {
-        log(LoggerFactory.getLogger(name), level, message);
-    }
-
-    public void log(Class<?> clazz, String message, Throwable err) {
-        log(LoggerFactory.getLogger(clazz), LogLevel.ERROR, message, err);
-    }
-
-    public void log(LogLevel level, String name, String message, Throwable err) {
-        log(LoggerFactory.getLogger(name), level, message, err);
     }
 
     private boolean isEnabled(org.slf4j.Logger logger, LogLevel level) {
@@ -112,11 +87,4 @@ public final class Logger {
         }
     }
 
-    public boolean isEnabled(LogLevel level, Class<?> clazz) {
-        return isEnabled(LoggerFactory.getLogger(clazz), level);
-    }
-
-    public boolean isEnabled(LogLevel level, String name) {
-        return isEnabled(LoggerFactory.getLogger(name), level);
-    }
 }

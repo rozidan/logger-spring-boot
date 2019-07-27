@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2019 Idan Roz the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package com.github.rozidan.springboot.logger;
 
 import java.util.regex.Pattern;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

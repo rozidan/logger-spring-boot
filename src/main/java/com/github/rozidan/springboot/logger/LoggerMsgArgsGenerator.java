@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2019 Idan Roz the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,8 @@ package com.github.rozidan.springboot.logger;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.text.StrSubstitutor;
+import lombok.NoArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -31,71 +28,36 @@ import org.aspectj.lang.reflect.MethodSignature;
  *
  * @author Idan
  */
-final class LoggerMsgFormatter {
+@NoArgsConstructor
+final class LoggerMsgArgsGenerator {
 
-    private static final String DOTS = "..";
-
-    private static final String METHDO_VALUE = "method.name";
-    private static final String ARGS_VALUE = "method.args";
-    private static final String RESULT_VALUE = "method.result";
-    private static final String DURATION_VALUE = "method.duration";
-    private static final String WARN_DURATION_VALUE = "method.warn.duration";
-    private static final String ERROR_CLASS_VALUE = "error.class.name";
-    private static final String ERROR_MSG_VALUE = "error.message";
-    private static final String ERROR_SOURCE_CLASS_VALUE = "error.source.class.name";
-    private static final String ERROR_LINE_VALUE = "error.source.line";
-
-    private LoggerFormats formats;
-
-    public LoggerMsgFormatter(LoggerFormats formats) {
-        this.formats = formats;
+    public Object[] enter(ProceedingJoinPoint joinPoint, Loggable loggable) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable)};
     }
 
-    public String enter(ProceedingJoinPoint joinPoint, Loggable loggable) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(METHDO_VALUE, methodName(joinPoint));
-        values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
-        return StrSubstitutor.replace(formats.getEnter(), values);
+    public Object[] warnBefore(ProceedingJoinPoint joinPoint, Loggable loggable, long nano) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable),
+                durationString(nano), warnDuration(loggable)};
     }
 
-    public String warnBefore(ProceedingJoinPoint joinPoint, Loggable loggable, long nano) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(METHDO_VALUE, methodName(joinPoint));
-        values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
-        values.put(DURATION_VALUE, durationString(nano));
-        values.put(WARN_DURATION_VALUE, warnDuration(loggable));
-        return StrSubstitutor.replace(formats.getWarnBefore(), values);
+    public Object[] warnAfter(ProceedingJoinPoint joinPoint, Loggable loggable, Object result, long nano) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable),
+                methodResults(result, loggable), durationString(nano), warnDuration(loggable)};
     }
 
-    public String warnAfter(ProceedingJoinPoint joinPoint, Loggable loggable, Object result, long nano) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(METHDO_VALUE, methodName(joinPoint));
-        values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
-        values.put(DURATION_VALUE, durationString(nano));
-        values.put(WARN_DURATION_VALUE, warnDuration(loggable));
-        values.put(RESULT_VALUE, methodResults(result, loggable));
-        return StrSubstitutor.replace(formats.getWarnAfter(), values);
+    public Object[] after(ProceedingJoinPoint joinPoint, Loggable loggable, Object result, long nano) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable),
+                methodResults(result, loggable), durationString(nano)};
     }
 
-    public String after(ProceedingJoinPoint joinPoint, Loggable loggable, Object result, long nano) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(METHDO_VALUE, methodName(joinPoint));
-        values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
-        values.put(DURATION_VALUE, durationString(nano));
-        values.put(RESULT_VALUE, methodResults(result, loggable));
-        return StrSubstitutor.replace(formats.getAfter(), values);
+    public Object[] error(ProceedingJoinPoint joinPoint, Loggable loggable, long nano, Throwable err) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable),
+                errClass(err), errMsg(err), errSourceClass(err), errLine(err), durationString(nano)};
     }
 
-    public String error(ProceedingJoinPoint joinPoint, Loggable loggable, long nano, Throwable err) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(METHDO_VALUE, methodName(joinPoint));
-        values.put(ARGS_VALUE, methodArgs(joinPoint, loggable));
-        values.put(DURATION_VALUE, durationString(nano));
-        values.put(ERROR_CLASS_VALUE, errClass(err));
-        values.put(ERROR_MSG_VALUE, errMsg(err));
-        values.put(ERROR_SOURCE_CLASS_VALUE, errSourceClass(err));
-        values.put(ERROR_LINE_VALUE, errLine(err));
-        return StrSubstitutor.replace(formats.getError(), values);
+    public Object[] errorWithException(ProceedingJoinPoint joinPoint, Loggable loggable, long nano, Throwable err) {
+        return new Object[]{methodName(joinPoint), methodArgs(joinPoint, loggable),
+                errClass(err), errMsg(err), errSourceClass(err), errLine(err), durationString(nano), err};
     }
 
     private String warnDuration(Loggable loggable) {
@@ -103,15 +65,15 @@ final class LoggerMsgFormatter {
     }
 
     private String methodName(JoinPoint joinPoint) {
-        return MethodSignature.class.cast(joinPoint.getSignature()).getMethod().getName();
+        return ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
     }
 
     private String methodArgs(JoinPoint joinPoint, Loggable loggable) {
-        return loggable.skipArgs() ? DOTS : argsToString(joinPoint.getArgs());
+        return loggable.skipArgs() ? ".." : argsToString(joinPoint.getArgs());
     }
 
     private String methodResults(Object result, Loggable loggable) {
-        return loggable.skipResult() ? DOTS : argsToString(result);
+        return loggable.skipResult() ? ".." : argsToString(result);
     }
 
     private String errClass(Throwable err) {

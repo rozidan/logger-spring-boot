@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Idan Rozenfeld the original author or authors
+ * Copyright (C) 2019 Idan Roz the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -45,14 +44,14 @@ public class LoggerInterceptor {
 
     private Logger logger;
 
-    private LoggerMsgFormatter formatter;
+    private LoggerMsgArgsGenerator lmag;
 
     private Set<WarnPoint> warnPoints;
     private ScheduledExecutorService warnService;
 
     @Autowired
-    public LoggerInterceptor(Logger logger, LoggerFormats formats) {
-        this.formatter = new LoggerMsgFormatter(formats);
+    public LoggerInterceptor(Logger logger) {
+        this.lmag = new LoggerMsgArgsGenerator();
         this.logger = logger;
     }
 
@@ -64,8 +63,9 @@ public class LoggerInterceptor {
             for (WarnPoint wp : warnPoints) {
                 long duration = System.nanoTime() - wp.getStart();
                 if (isOver(duration, wp.getLoggable())) {
-                    log(LogLevel.WARN, formatter.warnBefore(wp.getPoint(), wp.getLoggable(), duration), wp.getPoint(),
-                            wp.getLoggable());
+                    log(LogLevel.WARN, "#{}({}): in {} and still running (max {})",
+                            wp.getPoint(), wp.getLoggable(),
+                            lmag.warnBefore(wp.getPoint(), wp.getLoggable(), duration));
                     warnPoints.remove(wp);
                 }
             }
@@ -101,7 +101,7 @@ public class LoggerInterceptor {
     public Object logMethod(ProceedingJoinPoint joinPoint, Loggable loggable) throws Throwable {
         long start = System.nanoTime();
         WarnPoint warnPoint = null;
-        Object returnVal = null;
+        Object returnVal;
 
         if (isLevelEnabled(joinPoint, loggable) && loggable.warnOver() >= 0) {
             warnPoint = new WarnPoint(joinPoint, loggable, start);
@@ -109,7 +109,8 @@ public class LoggerInterceptor {
         }
 
         if (loggable.entered()) {
-            log(loggable.value(), formatter.enter(joinPoint, loggable), joinPoint, loggable);
+            log(loggable.value(), "#{}({}): entered", joinPoint,
+                    loggable, lmag.enter(joinPoint, loggable));
         }
 
         try {
@@ -117,18 +118,20 @@ public class LoggerInterceptor {
 
             long nano = System.nanoTime() - start;
             if (isOver(nano, loggable)) {
-                log(LogLevel.WARN, formatter.warnAfter(joinPoint, loggable, returnVal, nano), joinPoint, loggable);
+                log(LogLevel.WARN, "#{}({}): {} in {} (max {})",
+                        joinPoint, loggable, lmag.warnAfter(joinPoint, loggable, returnVal, nano));
             } else {
-                log(loggable.value(), formatter.after(joinPoint, loggable, returnVal, nano), joinPoint, loggable);
+                log(loggable.value(), "#{}({}): {} in {}", joinPoint, loggable,
+                        lmag.after(joinPoint, loggable, returnVal, nano));
             }
             return returnVal;
         } catch (Throwable ex) {
             if (contains(loggable.ignore(), ex)) {
-                log(LogLevel.ERROR, formatter.error(joinPoint, loggable, System.nanoTime() - start, ex),
-                        joinPoint, loggable);
+                log(LogLevel.ERROR, "#{}({}): thrown {}({}) from {}[{}] in {}",
+                        joinPoint, loggable, lmag.error(joinPoint, loggable, System.nanoTime() - start, ex));
             } else {
-                log(formatter.error(joinPoint, loggable, System.nanoTime() - start, ex),
-                        joinPoint, loggable, ex);
+                log(LogLevel.ERROR, "#{}({}): thrown {}({}) from {}[{}] in {}",
+                        joinPoint, loggable, lmag.errorWithException(joinPoint, loggable, System.nanoTime() - start, ex));
             }
             throw ex;
         } finally {
@@ -138,28 +141,18 @@ public class LoggerInterceptor {
         }
     }
 
-    private void log(LogLevel level, String message, ProceedingJoinPoint joinPoint, Loggable loggable) {
+    private void log(LogLevel level, String message, ProceedingJoinPoint joinPoint, Loggable loggable, Object... args) {
         if (loggable.name().isEmpty()) {
-            logger.log(level,
-                    MethodSignature.class.cast(joinPoint.getSignature()).getMethod().getDeclaringClass(), message);
+            logger.log(level, ((MethodSignature) joinPoint.getSignature()).getMethod().getDeclaringClass(), message, args);
         } else {
-            logger.log(level, loggable.name(), message);
-        }
-    }
-
-    private void log(String message, ProceedingJoinPoint joinPoint, Loggable loggable, Throwable ex) {
-        if (loggable.name().isEmpty()) {
-            logger.log(
-                    MethodSignature.class.cast(joinPoint.getSignature()).getMethod().getDeclaringClass(), message, ex);
-        } else {
-            logger.log(LogLevel.ERROR, loggable.name(), message, ex);
+            logger.log(level, loggable.name(), message, args);
         }
     }
 
     private boolean isLevelEnabled(ProceedingJoinPoint joinPoint, Loggable loggable) {
         return loggable.name().isEmpty()
                 ? logger.isEnabled(LogLevel.WARN,
-                MethodSignature.class.cast(joinPoint.getSignature()).getMethod().getDeclaringClass())
+                ((MethodSignature) joinPoint.getSignature()).getMethod().getDeclaringClass())
                 : logger.isEnabled(LogLevel.WARN, loggable.name());
     }
 

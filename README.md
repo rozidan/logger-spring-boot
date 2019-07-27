@@ -5,6 +5,7 @@
 
 [![Build Status](https://travis-ci.org/rozidan/logger-spring-boot.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot)
 [![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.rozidan/logger-spring-boot/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.rozidan/logger-spring-boot/)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Features
@@ -12,25 +13,19 @@ Register the Logger to your Spring Boot application and allow it to log wherever
 The Logger uses the slf4j to support abstraction for various logging frameworks.
 
 ## Setup
-
 In order to add logger to your project simply add this dependency to your classpath:
-
 ```xml
 <dependency>
     <groupId>com.github.rozidan</groupId>
     <artifactId>logger-spring-boot</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 ```groovy
-compile 'com.github.rozidan:logger-spring-boot:1.0.0-SNAPSHOT'
+compile 'com.github.rozidan:logger-spring-boot:1.1.0'
 ```
-
-
-and the sonatype public repository:
-
-
+For snapshots versions add the sonatype public repository:
 ```groovy
 repositories {
     mavenCentral()
