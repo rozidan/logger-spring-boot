@@ -5,7 +5,10 @@
 
 [![Build Status](https://travis-ci.org/rozidan/logger-spring-boot.svg?branch=master)](https://travis-ci.org/rozidan/logger-spring-boot)
 [![Coverage Status](https://coveralls.io/repos/github/rozidan/logger-spring-boot/badge.svg?branch=master)](https://coveralls.io/github/rozidan/logger-spring-boot?branch=master)
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.rozidan/logger-spring-boot/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.rozidan/logger-spring-boot/)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.rozidan/logger-spring-boot.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/rozidan/logger-spring-boot/)
+
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Features
